@@ -21,7 +21,7 @@ internal enum StatusCode
 
 internal static class NativeMethods
 {
-    private const string KeychainCredentialsLib = nameof(KeychainCredentials);
+    private const string KeychainCredentialsLib = nameof(KeychainCredentials) + ".Native";
 
     [DllImport(KeychainCredentialsLib, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
