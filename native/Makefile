@@ -1,4 +1,4 @@
-CFLAGS += -shared -framework CoreFoundation -framework Security
+CFLAGS += -shared -framework CoreFoundation -framework Security -mmacosx-version-min=10.13
 
 Debug: CFLAGS += -DDEBUG
 Debug: ../runtimes/osx/native/libKeychainCredentials.Native.dylib
