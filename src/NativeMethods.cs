@@ -22,6 +22,7 @@ internal enum StatusCode
 }
 
 [SuppressMessage("Performance", "CA1814", Justification = "Jagged arrays can't be marshalled and throw MarshalDirectiveException")]
+[SuppressMessage("Globalization", "CA2101", Justification = "False positive, see https://github.com/dotnet/roslyn-analyzers/issues/2886 and https://github.com/dotnet/roslyn-analyzers/issues/5009")]
 internal static class NativeMethods
 {
     private const string KeychainCredentialsLib = nameof(KeychainCredentials) + ".Native";
