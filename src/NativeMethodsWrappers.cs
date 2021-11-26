@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using static KeychainCredentialsLib.StatusCode;
 
 namespace KeychainCredentialsLib;
@@ -7,6 +8,7 @@ namespace KeychainCredentialsLib;
 /// Takes care of char buffers creation, retrying with a larger buffer if required and
 /// transforming non-recoverable error codes into <see cref="KeychainException"/>.
 /// </summary>
+[SuppressMessage("Performance", "CA1814", Justification = "Jagged arrays can't be marshalled and throw MarshalDirectiveException")]
 internal static class NativeMethodsWrappers
 {
     private const int DefaultBufferLength = 128;

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace KeychainCredentialsLib;
 
 /// <summary>
@@ -19,6 +21,7 @@ internal enum StatusCode
     BufferTooSmall = 25301,
 }
 
+[SuppressMessage("Performance", "CA1814", Justification = "Jagged arrays can't be marshalled and throw MarshalDirectiveException")]
 internal static class NativeMethods
 {
     private const string KeychainCredentialsLib = nameof(KeychainCredentials) + ".Native";
