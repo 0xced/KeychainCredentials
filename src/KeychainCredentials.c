@@ -165,7 +165,7 @@ OSStatus __cdecl GetAccounts(const char *server, const char *authType, UniChar *
 /// @param userName The user name to search for in the Keychain.
 /// @param password A pointer to a UniChar buffer that contains the password for the given `server` and `userName` upon successful execution (i.e. the return value is `errSecSuccess`).
 ///                 Pass `NULL` if you don't want to retrieve the password but just check for the existence of an item in the Keychain matching the `server` and `userName`,
-///                 withtout triggering a password prompt from the operating system.
+///                 without triggering a password prompt from the operating system.
 /// @param passwordLength A pointer to the length of the `password`. Before execution, the pointer must contain the length of the `password` buffer.
 ///                       Upon successful execution, contains the actual length of the password found in the keychain.
 ///                       Note: The length is the number of UniChar, not the number of bytes.
