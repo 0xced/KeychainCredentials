@@ -31,7 +31,7 @@ public class KeychainCredentials : ICredentials
     {
         if (uri == null) throw new ArgumentNullException(nameof(uri));
 
-        var userNames = GetUserNames(uri.Host, authType, _userNameSelection.UserNamesLimit);
+        var userNames = GetUserNames(uri.Host, authType, Math.Max(1, _userNameSelection.UserNamesLimit));
         var userName = _userNameSelection.SelectUserName(uri, authType, userNames);
         if (userName is null)
         {

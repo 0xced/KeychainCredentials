@@ -11,12 +11,10 @@ namespace KeychainCredentialsLib;
 [SuppressMessage("Performance", "CA1814", Justification = "Jagged arrays can't be marshalled and throw MarshalDirectiveException")]
 internal static class NativeMethodsWrappers
 {
-    private const int DefaultBufferLength = 128;
-
-    public static IReadOnlyCollection<string> GetUserNames(string server, string authType, int limit)
+    public static IReadOnlyCollection<string> GetUserNames(string server, string authType, int limit, int bufferLength = 128)
     {
         var result = new List<string>();
-        long maxLength = DefaultBufferLength;
+        long maxLength = bufferLength;
         var accounts = new char[limit, maxLength];
         var accountsLength = Enumerable.Repeat(maxLength, limit).ToArray();
         var numberOfAccounts = limit;
@@ -56,9 +54,9 @@ internal static class NativeMethodsWrappers
         return result;
     }
 
-    public static string? GetPassword(string server, string authType, string userName)
+    public static string? GetPassword(string server, string authType, string userName, int bufferLength = 128)
     {
-        var passwordBuffer = new char[DefaultBufferLength];
+        var passwordBuffer = new char[bufferLength];
         var passwordLength = passwordBuffer.Length;
         var status = NativeMethods.GetPassword(server, authType, userName, passwordBuffer, ref passwordLength);
         if (status == BufferTooSmall)
@@ -81,9 +79,9 @@ internal static class NativeMethodsWrappers
         throw new KeychainException(status);
     }
 
-    public static string? GetErrorMessage(StatusCode statusCode)
+    public static string? GetErrorMessage(StatusCode statusCode, int bufferLength = 512)
     {
-        var messageBuffer = new char[512];
+        var messageBuffer = new char[bufferLength];
         var messageBufferLength = messageBuffer.Length;
         var status = NativeMethods.GetErrorMessage(statusCode, messageBuffer, ref messageBufferLength);
         if (status == BufferTooSmall)

@@ -1,7 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
+
 #if !NET5_0_OR_GREATER
 // ReSharper disable All
 namespace System.Runtime.Versioning;
 
+[ExcludeFromCodeCoverage]
 internal abstract class OSPlatformAttribute : Attribute
 {
     private protected OSPlatformAttribute(string platformName) => PlatformName = platformName;
@@ -10,6 +13,7 @@ internal abstract class OSPlatformAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event, AllowMultiple = true, Inherited = false)]
+[ExcludeFromCodeCoverage]
 internal sealed class SupportedOSPlatformAttribute : OSPlatformAttribute
 {
     public SupportedOSPlatformAttribute(string platformName) : base(platformName)

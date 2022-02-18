@@ -1,28 +1,61 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Runtime.Versioning;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 
 namespace KeychainCredentialsLib.Tests;
 
-[SupportedOSPlatform("macOS")]
-public class KeychainCredentialsTest : IClassFixture<KeychainFixture>
+[Collection("Keychain collection")]
+public class KeychainCredentialsTest
 {
-    private readonly KeychainFixture _keychainFixture;
-
-    public KeychainCredentialsTest(KeychainFixture keychainFixture)
+    [Fact]
+    public void GetCredential_NullUri_ThrowsArgumentNullException()
     {
-        _keychainFixture = keychainFixture ?? throw new ArgumentNullException(nameof(keychainFixture));
+        // Arrange
+        var keychainCredentials = new KeychainCredentials();
+
+        // Act
+        Action action = () => keychainCredentials.GetCredential(null!, "");
+
+        // Assert
+        action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("uri");
     }
 
     [Fact]
-    public async Task CredentialExistsInKeychain()
+    public void GetCredential_DoesNotExistInKeychain_ReturnsNull()
     {
         // Arrange
-        await _keychainFixture.AddInternetPasswordAsync(new Uri("https://www.keychain-credentials-test.com"), "0xced", "hunter2");
+        var keychainCredentials = new KeychainCredentials();
+
+        // Act
+        var credential = keychainCredentials.GetCredential(new Uri("https://www.not-in-keychain.com"), "");
+
+        // Assert
+        credential.Should().BeNull();
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public void GetCredential_SelectsNonExistingUserName_ReturnsNull(
+        [CombinatorialValues(-1, 0, 1, 2)] int limit,
+        [CombinatorialValues("unknown", null)] string userName,
+        [CombinatorialValues("https://www.keychain-credentials-test.com", "https://www.not-in-keychain.com")] string uri)
+    {
+        // Arrange
+        var keychainCredentials = new KeychainCredentials(new UserNameSelection(userName, limit));
+
+        // Act
+        var credential = keychainCredentials.GetCredential(new Uri(uri), "");
+
+        // Assert
+        credential.Should().BeNull();
+    }
+
+    [InteractiveFact]
+    public void GetCredential_ExistsInKeychain_ReturnsCredential()
+    {
+        // Arrange
         var keychainCredentials = new KeychainCredentials();
 
         // Act
@@ -32,66 +65,17 @@ public class KeychainCredentialsTest : IClassFixture<KeychainFixture>
         credential.Should().BeEquivalentTo(new NetworkCredential("0xced", "hunter2"));
     }
 
-    [Fact]
-    public void CredentialDoesNotExistInKeychain()
+    private class UserNameSelection : IUserNameSelection
     {
-        // Arrange
-        var keychainCredentials = new KeychainCredentials();
+        public UserNameSelection(string? userName, int userNamesLimit)
+        {
+            UserName = userName;
+            UserNamesLimit = userNamesLimit;
+        }
 
-        // Act
-        var credential = keychainCredentials.GetCredential(new Uri("https://www.not-in-keychain.com"), "");
+        public string? UserName { get; }
+        public int UserNamesLimit { get;}
 
-        // Assert
-        credential.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task CredentialExistsInKeychainSelectsNull()
-    {
-        // Arrange
-        await _keychainFixture.AddInternetPasswordAsync(new Uri("https://www.null-username-selection.com"), "0xced", "hunter2");
-        var keychainCredentials = new KeychainCredentials(new NullUserNameSelection());
-
-        // Act
-        var credential = keychainCredentials.GetCredential(new Uri("https://www.null-username-selection.com"), "");
-
-        // Assert
-        credential.Should().BeNull();
-    }
-
-    [Fact]
-    public void CredentialDoesNotExistInKeychainSelectsNull()
-    {
-        // Arrange
-        var keychainCredentials = new KeychainCredentials(new NullUserNameSelection());
-
-        // Act
-        var credential = keychainCredentials.GetCredential(new Uri("https://www.not-in-keychain.com"), "");
-
-        // Assert
-        credential.Should().BeNull();
-    }
-
-    [Fact]
-    public void CredentialDoesNotExistInKeychainSelectsMe()
-    {
-        // Arrange
-        var keychainCredentials = new KeychainCredentials(new MeUserNameSelection());
-
-        // Act
-        var credential = keychainCredentials.GetCredential(new Uri("https://www.not-in-keychain.com"), "");
-
-        // Assert
-        credential.Should().BeNull();
-    }
-
-    private class NullUserNameSelection : IUserNameSelection
-    {
-        public string? SelectUserName(Uri uri, string authType, IReadOnlyCollection<string> userNames) => null;
-    }
-
-    private class MeUserNameSelection : IUserNameSelection
-    {
-        public string SelectUserName(Uri uri, string authType, IReadOnlyCollection<string> userNames) => "me";
+        public string? SelectUserName(Uri uri, string authType, IReadOnlyCollection<string> userNames) => UserName;
     }
 }

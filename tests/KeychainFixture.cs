@@ -8,6 +8,15 @@ using Xunit.Sdk;
 
 namespace KeychainCredentialsLib.Tests;
 
+[CollectionDefinition("Keychain collection")]
+public class KeychainCollection : ICollectionFixture<KeychainFixture>
+{
+    // This class has no code, and is never created. Its purpose is simply
+    // to be the place to apply [KeychainCollection] and all the
+    // ICollectionFixture<> interfaces.
+    // See https://xunit.net/docs/shared-context#collection-fixture
+}
+
 public class KeychainFixture : IAsyncLifetime
 {
     private readonly IMessageSink _messageSink;
@@ -87,6 +96,8 @@ public class KeychainFixture : IAsyncLifetime
                 _keychainName
             })
             .ExecuteAsync();
+
+        await AddInternetPasswordAsync(new Uri("https://www.keychain-credentials-test.com"), "0xced", "hunter2");
     }
 
     async Task IAsyncLifetime.DisposeAsync()
