@@ -1,12 +1,21 @@
 #import <Security/Security.h>
 
+/// Copy the CFStringRef into the UniChar buffer
+/// @param string The string to copy.
+/// @param buffer A pointer to the destination UniChar buffer.
+/// @param bufferLength A pointer to the length of the buffer.
+///                     Must point to the actual length of the buffer upon method entry.
+///                     Contains the actual length that was copied to the buffer upon method exit.
+//                      Note: The length is the number of UniChar, not the number of bytes.
+/// @return true if the buffer is large enough to copy the string, false otherwise. Also return false if either buffer or bufferLength is `NULL`
+/// @discussion When the buffer is not large enough, the buffer is cleared with zeroes.
 static bool CopyString(CFStringRef string, UniChar *buffer, long *bufferLength)
 {
     if (buffer == NULL || bufferLength == NULL)
     {
         return false;
     }
-    UInt8 lossByte = 0;
+    UInt8 lossByte = 0; // Pass 0 if you do not want lossy conversion to occur.
     Boolean byteOrderMark = false;
     long bufferActualLength = *bufferLength;
     CFIndex length = CFStringGetLength(string); // The number (in terms of UTF-16 code pairs) of characters stored in the string.
