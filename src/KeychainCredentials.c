@@ -9,7 +9,7 @@
 //                      Note: The length is the number of UniChar, not the number of bytes.
 /// @return true if the buffer is large enough to copy the string, false otherwise. Also return false if either buffer or bufferLength is `NULL`
 /// @discussion When the buffer is not large enough, the buffer is cleared with zeroes.
-static bool CopyString(CFStringRef string, UniChar *buffer, long *bufferLength)
+static bool CopyString(CFStringRef string, UniChar *buffer, int32_t *bufferLength)
 {
     if (buffer == NULL || bufferLength == NULL)
     {
@@ -56,7 +56,7 @@ static CFDictionaryRef CreateQuery(bool getPassword, const char *server, const c
     return query;
 }
 
-static bool FillPassword(CFDictionaryRef result, UniChar *password, long *passwordLength)
+static bool FillPassword(CFDictionaryRef result, UniChar *password, int32_t *passwordLength)
 {
     bool bufferTooSmall = false;
     CFTypeRef passwordRef = CFDictionaryGetValue(result, kSecValueData);
