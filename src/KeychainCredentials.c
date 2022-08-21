@@ -181,7 +181,7 @@ OSStatus __cdecl GetAccounts(const char *server, const char *authType, UniChar *
 /// @return An OSStatus that describes the result of the underlying `SecItemCopyMatching` function. Returns `errSecParam` if either `server` or `userName` is `NULL`.
 /// @discussion If the `password` buffer is not large enough, the call should be retried with a larger buffer using the size provided
 ///             as output in the `passwordLength` pointer.
-OSStatus __cdecl GetPassword(const char *server, const char *authType, const char *userName, UniChar *password, long *passwordLength)
+OSStatus __cdecl GetPassword(const char *server, const char *authType, const char *userName, UniChar *password, int32_t *passwordLength)
 {
     if (server == NULL || userName == NULL)
     {
@@ -202,7 +202,7 @@ OSStatus __cdecl GetPassword(const char *server, const char *authType, const cha
     return bufferTooSmall ? -errSecBufferTooSmall : status;
 }
 
-OSStatus __cdecl GetErrorMessage(OSStatus statusCode, UniChar *message, long *messageLength)
+OSStatus __cdecl GetErrorMessage(OSStatus statusCode, UniChar *message, int32_t *messageLength)
 {
     if (statusCode == errSecSuccess || message == NULL || messageLength == NULL)
     {
