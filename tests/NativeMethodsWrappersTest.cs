@@ -44,7 +44,7 @@ public class NativeMethodsWrappersTest
     }
 
     [InteractiveFact]
-    public void  GetPassword_ExistingUriAndUserName_ReturnsPassword()
+    public void GetPassword_ExistingUriAndUserName_ReturnsPassword()
     {
         var password = NativeMethodsWrappers.GetPassword(server: "www.keychain-credentials-test.com", authType: "", userName: "0xced", bufferLength: 2);
 
