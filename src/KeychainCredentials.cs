@@ -13,7 +13,7 @@ public class KeychainCredentials : ICredentials
     /// <summary>
     /// Initialize a new instance of the <see cref="KeychainCredentials"/> class.
     /// </summary>
-    public KeychainCredentials() : this(new DefaultUserNameSelection())
+    public KeychainCredentials() : this(new FirstUserNameSelection())
     {
     }
 

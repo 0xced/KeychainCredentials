@@ -4,6 +4,13 @@
 [assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.1", FrameworkDisplayName="")]
 namespace KeychainCredentialsLib
 {
+    public class FirstUserNameSelection : KeychainCredentialsLib.IUserNameSelection
+    {
+        public FirstUserNameSelection() { }
+        public FirstUserNameSelection(string userName) { }
+        public int UserNamesLimit { get; }
+        public string? SelectUserName(System.Uri uri, string authType, System.Collections.Generic.IReadOnlyCollection<string> userNames) { }
+    }
     public interface IUserNameSelection
     {
         int UserNamesLimit { get; }
