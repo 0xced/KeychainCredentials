@@ -29,11 +29,11 @@ internal static class NativeMethods
 
     [DllImport(KeychainCredentialsLib, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-    internal static extern StatusCode GetAccounts([MarshalAs(UnmanagedType.LPUTF8Str)] string server, [MarshalAs(UnmanagedType.LPUTF8Str)] string authType, char[,] accounts, long[] accountsLength, ref int numberOfAccounts);
+    internal static extern StatusCode GetAccounts([MarshalAs(UnmanagedType.LPUTF8Str)] string server, [MarshalAs(UnmanagedType.LPUTF8Str)] string? authType, char[,] accounts, int[] accountsLength, ref int numberOfAccounts);
 
     [DllImport(KeychainCredentialsLib, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-    internal static extern StatusCode GetPassword([MarshalAs(UnmanagedType.LPUTF8Str)] string server, [MarshalAs(UnmanagedType.LPUTF8Str)] string authType, [MarshalAs(UnmanagedType.LPUTF8Str)] string userName, char[] password, ref int passwordLength);
+    internal static extern StatusCode GetPassword([MarshalAs(UnmanagedType.LPUTF8Str)] string server, [MarshalAs(UnmanagedType.LPUTF8Str)] string? authType, [MarshalAs(UnmanagedType.LPUTF8Str)] string userName, char[] password, ref int passwordLength);
 
     [DllImport(KeychainCredentialsLib, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]

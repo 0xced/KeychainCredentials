@@ -72,7 +72,7 @@ static bool FillPassword(CFDictionaryRef result, UniChar *password, int32_t *pas
     return bufferTooSmall;
 }
 
-static bool CopyAccountAtIndex(CFDictionaryRef item, UniChar **accounts, long *accountsLength, CFIndex i)
+static bool CopyAccountAtIndex(CFDictionaryRef item, UniChar **accounts, int32_t *accountsLength, CFIndex i)
 {
     CFTypeRef accountRef = CFDictionaryGetValue(item, kSecAttrAccount);
     if (accountRef != NULL && CFGetTypeID(accountRef) == CFStringGetTypeID())
@@ -87,7 +87,7 @@ static bool CopyAccountAtIndex(CFDictionaryRef item, UniChar **accounts, long *a
     return false;
 }
 
-OSStatus __cdecl GetAccounts(const char *server, const char *authType, UniChar **accounts, long *accountsLength, int32_t *numberOfAccounts)
+OSStatus __cdecl GetAccounts(const char *server, const char *authType, UniChar **accounts, int32_t *accountsLength, int32_t *numberOfAccounts)
 {
     if (server == NULL || accounts == NULL || numberOfAccounts == NULL || accountsLength == NULL || *numberOfAccounts <= 0)
     {

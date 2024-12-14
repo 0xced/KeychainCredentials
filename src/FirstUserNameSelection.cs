@@ -31,7 +31,7 @@ public class FirstUserNameSelection : IUserNameSelection
     public int UserNamesLimit => _userName == null ? 1 : 16;
 
     /// <inheritdoc />
-    public string? SelectUserName(Uri uri, string authType, IReadOnlyCollection<string> userNames)
+    public string? SelectUserName(Uri uri, string? authType, IReadOnlyCollection<string> userNames)
     {
         return _userName != null ? userNames.FirstOrDefault(e => e == _userName) : userNames.FirstOrDefault();
     }

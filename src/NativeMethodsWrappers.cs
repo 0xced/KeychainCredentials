@@ -11,10 +11,12 @@ namespace KeychainCredentialsLib;
 [SuppressMessage("Performance", "CA1814", Justification = "Jagged arrays can't be marshalled and throw MarshalDirectiveException")]
 internal static class NativeMethodsWrappers
 {
-    public static IReadOnlyCollection<string> GetUserNames(string server, string authType, int limit, int bufferLength = 128)
+    public static IReadOnlyCollection<string> GetUserNames(string server, string? authType, int limit, int bufferLength = 128)
     {
+        if (server == null) throw new ArgumentNullException(nameof(server));
+
         var result = new List<string>();
-        long maxLength = bufferLength;
+        var maxLength = bufferLength;
         var accounts = new char[limit, maxLength];
         var accountsLength = Enumerable.Repeat(maxLength, limit).ToArray();
         var numberOfAccounts = limit;
@@ -54,8 +56,11 @@ internal static class NativeMethodsWrappers
         return result;
     }
 
-    public static string? GetPassword(string server, string authType, string userName, int bufferLength = 128)
+    public static bool TryGetPassword(string server, string? authType, string userName, [NotNullWhen(true)] out string? password, [NotNullWhen(false)] out UnavailabilityReason? reason, int bufferLength = 128)
     {
+        if (server == null) throw new ArgumentNullException(nameof(server));
+        if (userName == null) throw new ArgumentNullException(nameof(userName));
+
         var passwordBuffer = new char[bufferLength];
         var passwordLength = passwordBuffer.Length;
         var status = NativeMethods.GetPassword(server, authType, userName, passwordBuffer, ref passwordLength);
@@ -66,17 +71,24 @@ internal static class NativeMethodsWrappers
             status = NativeMethods.GetPassword(server, authType, userName, passwordBuffer, ref passwordLength);
         }
 
-        if (status is SecUserCanceled or SecItemNotFound)
+        switch (status)
         {
-            return null;
+            case SecUserCanceled:
+                password = null;
+                reason = UnavailabilityReason.Denied;
+                return false;
+            case SecItemNotFound:
+                password = null;
+                reason = UnavailabilityReason.NotFound;
+                return false;
+            case SecSuccess:
+                password = new string(passwordBuffer, 0, passwordLength);
+                reason = null;
+                return true;
+            case BufferTooSmall:
+            default:
+                throw new KeychainException(status);
         }
-
-        if (status == SecSuccess)
-        {
-            return new string(passwordBuffer, 0, passwordLength);
-        }
-
-        throw new KeychainException(status);
     }
 
     public static string? GetErrorMessage(StatusCode statusCode, int bufferLength = 512)

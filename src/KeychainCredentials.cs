@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using static KeychainCredentialsLib.NativeMethodsWrappers;
 
 namespace KeychainCredentialsLib;
@@ -27,23 +28,47 @@ public class KeychainCredentials : ICredentials
     }
 
     /// <inheritdoc />
-    public NetworkCredential? GetCredential(Uri uri, string authType)
+    public NetworkCredential? GetCredential(Uri uri, string? authType)
+    {
+        return TryGetCredential(uri, authType, out var credential, out _) ? credential : null;
+    }
+
+    /// <summary>
+    /// Retrieves a <see cref="NetworkCredential"/> object that is associated with the specified URI, and authentication type.
+    /// </summary>
+    /// <param name="uri">The <see cref="Uri"/> that the client is providing authentication for.</param>
+    /// <param name="authType">The type of authentication, as defined in the <see cref="IAuthenticationModule.AuthenticationType"/> property.</param>
+    /// <param name="credential">When this method returns <see langword="true"/>, contains the credential associated with the specified URI and authentication type, if the credential is retrieved from the Keychain; otherwise, <see langword="null"/>.</param>
+    /// <param name="reason">When this method returns <see langword="false"/>, contains the reason why the credential was not retrieved from the Keychain; otherwise, <see langword="null"/>.</param>
+    /// <exception cref="ArgumentNullException">The <paramref name="uri"/> is null.</exception>
+    /// <returns><see langword="true"/> if a credential matching the <paramref name="uri"/> and <paramref name="authType"/> is retrieved from the Keychain; otherwise, <see langword="false"/>.</returns>
+    public bool TryGetCredential(Uri uri, string? authType, [NotNullWhen(true)] out NetworkCredential? credential, [NotNullWhen(false)] out UnavailabilityReason? reason)
     {
         if (uri == null) throw new ArgumentNullException(nameof(uri));
 
         var userNames = GetUserNames(uri.Host, authType, Math.Max(1, _userNameSelection.UserNamesLimit));
+        if (userNames.Count == 0)
+        {
+            credential = null;
+            reason = UnavailabilityReason.NotFound;
+            return false;
+        }
+
         var userName = _userNameSelection.SelectUserName(uri, authType, userNames);
         if (userName is null)
         {
-            return null;
+            credential = null;
+            reason = UnavailabilityReason.NotFound;
+            return false;
         }
 
-        var password = GetPassword(uri.Host, authType, userName);
-        if (password is null)
+        if (TryGetPassword(uri.Host, authType, userName, out var password, out reason))
         {
-            return null;
+            credential = new NetworkCredential(userName, password);
+            return true;
         }
 
-        return new NetworkCredential(userName, password);
+        credential = null;
+        return false;
     }
 }

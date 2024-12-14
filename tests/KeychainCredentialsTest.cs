@@ -76,6 +76,6 @@ public class KeychainCredentialsTest
         public string? UserName { get; }
         public int UserNamesLimit { get; }
 
-        public string? SelectUserName(Uri uri, string authType, IReadOnlyCollection<string> userNames) => UserName;
+        public string? SelectUserName(Uri uri, string? authType, IReadOnlyCollection<string> userNames) => UserName;
     }
 }

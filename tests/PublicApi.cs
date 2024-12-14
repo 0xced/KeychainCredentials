@@ -5,7 +5,6 @@ using Xunit;
 
 namespace KeychainCredentialsLib.Tests;
 
-[UsesVerify]
 public class PublicApi
 {
     [Fact]

@@ -7,8 +7,6 @@ namespace KeychainCredentialsLib.Tests;
 [Collection("Keychain collection")]
 public class NativeMethodsWrappersTest
 {
-    private const int ParamErr = -50;
-
     [Fact]
     public void GetErrorMessage_SecItemNotFound_ReturnsErrorMessage()
     {
@@ -18,12 +16,11 @@ public class NativeMethodsWrappersTest
     }
 
     [Fact]
-    public void GetUserNames_NullServer_ThrowsKeychainException()
+    public void GetUserNames_NullServer_Throws()
     {
         Action action = () => NativeMethodsWrappers.GetUserNames(server: null!, authType: "", limit: 1);
 
-        action.Should().Throw<KeychainException>()
-            .And.StatusCode.Should().Be(ParamErr);
+        action.Should().Throw<ArgumentNullException>().WithParameterName("server");
     }
 
     [Fact]
@@ -35,19 +32,28 @@ public class NativeMethodsWrappersTest
     }
 
     [Fact]
-    public void GetPassword_NullServer_ThrowsKeychainException()
+    public void TryGetPassword_NullServer_Throws()
     {
-        Action action = () => NativeMethodsWrappers.GetPassword(server: null!, authType: "", userName: "");
+        Action action = () => NativeMethodsWrappers.TryGetPassword(server: null!, authType: "", userName: "", out _, out _);
 
-        action.Should().Throw<KeychainException>()
-            .And.StatusCode.Should().Be(ParamErr);
+        action.Should().Throw<ArgumentNullException>().WithParameterName("server");
+    }
+
+    [Fact]
+    public void TryGetPassword_DoesNotExist_ReturnsNotFound()
+    {
+        var result = NativeMethodsWrappers.TryGetPassword(server: "www.example.com", authType: "", userName: "any", out _, out var reason);
+
+        result.Should().BeFalse();
+        reason.Should().Be(UnavailabilityReason.NotFound);
     }
 
     [InteractiveFact]
-    public void GetPassword_ExistingUriAndUserName_ReturnsPassword()
+    public void TryGetPassword_ExistingUriAndUserName_ReturnsPassword()
     {
-        var password = NativeMethodsWrappers.GetPassword(server: "www.keychain-credentials-test.com", authType: "", userName: "0xced", bufferLength: 2);
+        var result = NativeMethodsWrappers.TryGetPassword(server: "www.keychain-credentials-test.com", authType: "", userName: "0xced", out var password, out _, bufferLength: 2);
 
+        result.Should().BeTrue();
         password.Should().Be("hunter2");
     }
 }

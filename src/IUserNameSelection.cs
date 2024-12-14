@@ -18,5 +18,5 @@ public interface IUserNameSelection
     /// <param name="authType">The type of authentication.</param>
     /// <param name="userNames">The collection of available user names in the Keychain to choose from.</param>
     /// <returns>An element from the <paramref name="userNames"/> collection or <see langword="null"/> is none is applicable.</returns>
-    string? SelectUserName(Uri uri, string authType, IReadOnlyCollection<string> userNames);
+    string? SelectUserName(Uri uri, string? authType, IReadOnlyCollection<string> userNames);
 }
