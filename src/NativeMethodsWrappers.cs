@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Versioning;
 using static KeychainCredentialsLib.StatusCode;
 
 namespace KeychainCredentialsLib;
@@ -9,6 +10,7 @@ namespace KeychainCredentialsLib;
 /// transforming non-recoverable error codes into <see cref="KeychainException"/>.
 /// </summary>
 [SuppressMessage("Performance", "CA1814", Justification = "Jagged arrays can't be marshalled and throw MarshalDirectiveException")]
+[SupportedOSPlatform("macOS")]
 internal static class NativeMethodsWrappers
 {
     public static IReadOnlyCollection<string> GetUserNames(string server, string? authType, int limit, int bufferLength = 128)

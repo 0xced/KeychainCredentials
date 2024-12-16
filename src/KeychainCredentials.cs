@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Versioning;
 using static KeychainCredentialsLib.NativeMethodsWrappers;
 
 namespace KeychainCredentialsLib;
@@ -6,7 +7,7 @@ namespace KeychainCredentialsLib;
 /// <summary>
 /// Implementation of the <see cref="ICredentials"/> interface using the macOS Keychain.
 /// </summary>
-[System.Runtime.Versioning.SupportedOSPlatform("macOS")]
+[SupportedOSPlatform("macOS")]
 public class KeychainCredentials : ICredentials
 {
     private readonly IUserNameSelection _userNameSelection;

@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Runtime.Versioning;
 using FluentAssertions;
 using Xunit;
 
 namespace KeychainCredentialsLib.Tests;
 
 [Collection("Keychain collection")]
+[SupportedOSPlatform("macOS")]
 public class KeychainCredentialsTest
 {
-    [Fact]
+    [SkippableFact]
     public void GetCredential_NullUri_ThrowsArgumentNullException()
     {
         // Arrange
@@ -22,7 +24,7 @@ public class KeychainCredentialsTest
         action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("uri");
     }
 
-    [Fact]
+    [SkippableFact]
     public void GetCredential_DoesNotExistInKeychain_ReturnsNull()
     {
         // Arrange
@@ -35,7 +37,7 @@ public class KeychainCredentialsTest
         credential.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [CombinatorialData]
     public void GetCredential_SelectsNonExistingUserName_ReturnsNull(
         [CombinatorialValues(-1, 0, 1, 2)] int limit,
