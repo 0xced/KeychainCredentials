@@ -1,6 +1,6 @@
 ﻿[assembly: System.CLSCompliant(true)]
-[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/0xced/KeychainCredentials.git")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.1", FrameworkDisplayName="")]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/0xced/KeychainCredentials")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.1", FrameworkDisplayName=".NET Standard 2.1")]
 namespace KeychainCredentialsLib
 {
     public class FirstUserNameSelection : KeychainCredentialsLib.IUserNameSelection
