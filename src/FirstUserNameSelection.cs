@@ -1,7 +1,7 @@
 namespace KeychainCredentialsLib;
 
 /// <summary>
-/// Selects the first user name returned by the Keychain for a given URI.
+/// Selects the first username returned by the Keychain for a given URI.
 /// </summary>
 public class FirstUserNameSelection : IUserNameSelection
 {
@@ -11,7 +11,7 @@ public class FirstUserNameSelection : IUserNameSelection
     /// Initialize a new instance of the <see cref="KeychainCredentials"/> class.
     /// </summary>
     /// <remarks>
-    /// Use the constructor that takes a user name if you know which user name must be used in advance.
+    /// Use the constructor that takes a username if you know which username must be used in advance.
     /// </remarks>
     public FirstUserNameSelection()
     {
@@ -20,7 +20,7 @@ public class FirstUserNameSelection : IUserNameSelection
     /// <summary>
     /// Initialize a new instance of the <see cref="KeychainCredentials"/> class.
     /// </summary>
-    /// <param name="userName">The user name to match against the available user names in the Keychain.</param>
+    /// <param name="userName">The username to match against the available usernames in the Keychain.</param>
     /// <exception cref="ArgumentNullException">The <paramref name="userName"/> is null.</exception>
     public FirstUserNameSelection(string userName)
     {

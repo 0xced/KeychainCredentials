@@ -4,14 +4,12 @@ namespace KeychainCredentialsLib;
 
 /// <summary>
 /// A subset of status codes (OSStatus) returned by the Security framework.
-/// The status codes defined in this enum can be handled gracefully, when a status code not
-/// defined in this enum is returned, a <see cref="KeychainException"/> is thrown.
+/// The status codes defined in this enum can be handled gracefully, when a status code not defined in this enum is returned, a <see cref="KeychainException"/> is thrown.
 /// <para/>
 /// See https://developer.apple.com/documentation/security/1542001-security_framework_result_codes for a complete list of the Security framework status codes.
 /// </summary>
 /// <remarks>
-/// Negative codes are actual codes from the Security framework while positive
-/// codes are custom status codes used for native interop communication.
+/// Negative codes are actual codes from the Security framework, while positive codes are custom status codes used for native interop communication.
 /// </remarks>
 internal enum StatusCode
 {

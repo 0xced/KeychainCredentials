@@ -7,7 +7,7 @@
 ///                     Must point to the actual length of the buffer upon method entry.
 ///                     Contains the actual length that was copied to the buffer upon method exit.
 //                      Note: The length is the number of UniChar, not the number of bytes.
-/// @return true if the buffer is large enough to copy the string, false otherwise. Also return false if either buffer or bufferLength is `NULL`
+/// @return true if the buffer is large enough to copy the string, false otherwise. Also returns false if either buffer or bufferLength is `NULL`
 /// @discussion When the buffer is not large enough, the buffer is cleared with zeroes.
 static bool CopyString(CFStringRef string, UniChar *buffer, int32_t *bufferLength)
 {
@@ -168,10 +168,10 @@ OSStatus __cdecl GetAccounts(const char *server, const char *authType, UniChar *
     return bufferTooSmall ? -errSecBufferTooSmall : status;
 }
 
-/// Get the password for the specified server and user name from the Keychain.
+/// Get the password for the specified server and username from the Keychain.
 /// @param server The server to search for in the Keychain.
 /// @param authType The authentication type. Currently unused.
-/// @param userName The user name to search for in the Keychain.
+/// @param userName The username to search for in the Keychain.
 /// @param password A pointer to a UniChar buffer that contains the password for the given `server` and `userName` upon successful execution (i.e. the return value is `errSecSuccess`).
 ///                 Pass `NULL` if you don't want to retrieve the password but just check for the existence of an item in the Keychain matching the `server` and `userName`,
 ///                 without triggering a password prompt from the operating system.
