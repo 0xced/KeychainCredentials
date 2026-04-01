@@ -13,7 +13,7 @@ public class KeychainException : Exception
     /// Initialize a new instance of the <see cref="KeychainException"/> class.
     /// </summary>
     /// <param name="statusCode">The underlying OSStatus code representing the error.</param>
-    internal KeychainException(StatusCode statusCode) : base(GetErrorMessage(statusCode))
+    internal KeychainException(StatusCode statusCode) : base(GetKeychainExceptionMessage(statusCode))
     {
         StatusCode = (int)statusCode;
     }
@@ -26,4 +26,14 @@ public class KeychainException : Exception
     /// There is also the <see href="https://developer.apple.com/documentation/security/security-framework-result-codes">Security Framework Result Codes</see>, but it doesn't include the actual status code values.
     /// </remarks>
     public int StatusCode { get; }
+
+    private static string GetKeychainExceptionMessage(StatusCode statusCode)
+    {
+        var message = GetErrorMessage(statusCode);
+        if (message == null)
+        {
+            return $"OSStatus {(int)statusCode}";
+        }
+        return message.StartsWith("OSStatus", StringComparison.Ordinal) ? message : $"{message} (OSStatus {(int)statusCode})";
+    }
 }
