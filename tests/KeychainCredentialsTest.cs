@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Runtime.Versioning;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace KeychainCredentialsLib.Tests;
