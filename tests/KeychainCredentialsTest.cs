@@ -67,6 +67,19 @@ public class KeychainCredentialsTest
         credential.Should().BeEquivalentTo(new NetworkCredential("0xced", "hunter2"));
     }
 
+    [InteractiveFact]
+    public void GetCredential_HasMultipleUsersInKeychain_ReturnsMatchingCredential()
+    {
+        // Arrange
+        var keychainCredentials = new KeychainCredentials(new FirstUserNameSelection("userB"));
+
+        // Act
+        var credential = keychainCredentials.GetCredential(new Uri("https://www.multiple-users.com"), "");
+
+        // Assert
+        credential.Should().BeEquivalentTo(new NetworkCredential("userB", "p@$$w0rdB"));
+    }
+
     private class UserNameSelection : IUserNameSelection
     {
         public UserNameSelection(string? userName, int userNamesLimit)

@@ -96,6 +96,8 @@ public class KeychainFixture : IAsyncLifetime
             .ExecuteAsync();
 
         await AddInternetPasswordAsync(new Uri("https://www.keychain-credentials-test.com"), "0xced", "hunter2");
+        await AddInternetPasswordAsync(new Uri("https://www.multiple-users.com"), "userA", "p@$$w0rdA");
+        await AddInternetPasswordAsync(new Uri("https://www.multiple-users.com"), "userB", "p@$$w0rdB");
     }
 
     async Task IAsyncLifetime.DisposeAsync()
