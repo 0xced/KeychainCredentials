@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
@@ -16,6 +17,7 @@ public class KeychainCollection : ICollectionFixture<KeychainFixture>
     // See https://xunit.net/docs/shared-context#collection-fixture
 }
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Instantiated by xUnit")]
 public class KeychainFixture : IAsyncLifetime
 {
     private readonly IMessageSink _messageSink;
@@ -39,7 +41,7 @@ public class KeychainFixture : IAsyncLifetime
             "ftps" => "ftps", // https://developer.apple.com/documentation/security/secprotocoltype/ksecprotocoltypeftps
             "http" => "http", // https://developer.apple.com/documentation/security/secprotocoltype/ksecprotocoltypehttp
             "https" => "htps", // https://developer.apple.com/documentation/security/secprotocoltype/ksecprotocoltypehttps
-            _ => throw new NotImplementedException($"Scheme {uri.Scheme} to SecProtocolType is not implemented")
+            _ => throw new NotImplementedException($"Scheme {uri.Scheme} to SecProtocolType is not implemented"),
         };
 
         await Cli.Wrap("security")
@@ -96,8 +98,6 @@ public class KeychainFixture : IAsyncLifetime
             .ExecuteAsync();
 
         await AddInternetPasswordAsync(new Uri("https://www.keychain-credentials-test.com"), "0xced", "hunter2");
-        await AddInternetPasswordAsync(new Uri("https://www.multiple-users.com"), "userA", "p@$$w0rdA");
-        await AddInternetPasswordAsync(new Uri("https://www.multiple-users.com"), "userB", "p@$$w0rdB");
     }
 
     async Task IAsyncLifetime.DisposeAsync()

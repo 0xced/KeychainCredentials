@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Runtime.Versioning;
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Xunit;
 
@@ -9,7 +10,7 @@ namespace KeychainCredentialsLib.Tests;
 
 [Collection("Keychain collection")]
 [SupportedOSPlatform("macOS")]
-public class KeychainCredentialsTest
+public class KeychainCredentialsTest(KeychainFixture keychain)
 {
     [SkippableFact]
     public void GetCredential_NullUri_ThrowsArgumentNullException()
@@ -54,6 +55,21 @@ public class KeychainCredentialsTest
         credential.Should().BeNull();
     }
 
+    [SkippableFact]
+    public void TryGetCredential_DoesNotExistInKeychain_ReturnsFalseAndNotFoundReason()
+    {
+        // Arrange
+        var keychainCredentials = new KeychainCredentials();
+
+        // Act
+        var success = keychainCredentials.TryGetCredential(new Uri("https://www.not-in-keychain.com"), "", out var credential, out var reason);
+
+        // Assert
+        success.Should().BeFalse();
+        credential.Should().BeNull();
+        reason.Should().Be(UnavailabilityReason.NotFound);
+    }
+
     [InteractiveFact]
     public void GetCredential_ExistsInKeychain_ReturnsCredential()
     {
@@ -68,9 +84,11 @@ public class KeychainCredentialsTest
     }
 
     [InteractiveFact]
-    public void GetCredential_HasMultipleUsersInKeychain_ReturnsMatchingCredential()
+    public async Task GetCredential_HasMultipleUsersInKeychain_ReturnsMatchingCredential()
     {
         // Arrange
+        await keychain.AddInternetPasswordAsync(new Uri("https://www.multiple-users.com"), "userA", "p@$$w0rdA");
+        await keychain.AddInternetPasswordAsync(new Uri("https://www.multiple-users.com"), "userB", "p@$$w0rdB");
         var keychainCredentials = new KeychainCredentials(new FirstUserNameSelection("userB"));
 
         // Act
@@ -80,17 +98,15 @@ public class KeychainCredentialsTest
         credential.Should().BeEquivalentTo(new NetworkCredential("userB", "p@$$w0rdB"));
     }
 
-    private class UserNameSelection : IUserNameSelection
+    private class UserNameSelection(string? userName, int userNamesLimit) : IUserNameSelection
     {
-        public UserNameSelection(string? userName, int userNamesLimit)
+        public int UserNamesLimit { get; } = userNamesLimit;
+
+        public string? SelectUserName(Uri uri, string? authType, IReadOnlyCollection<string> userNames)
         {
-            UserName = userName;
-            UserNamesLimit = userNamesLimit;
+            _ = uri;
+            _ = authType;
+            return userName;
         }
-
-        public string? UserName { get; }
-        public int UserNamesLimit { get; }
-
-        public string? SelectUserName(Uri uri, string? authType, IReadOnlyCollection<string> userNames) => UserName;
     }
 }
