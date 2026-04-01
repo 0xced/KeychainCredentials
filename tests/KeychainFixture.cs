@@ -11,9 +11,8 @@ namespace KeychainCredentialsLib.Tests;
 [CollectionDefinition("Keychain collection")]
 public class KeychainCollection : ICollectionFixture<KeychainFixture>
 {
-    // This class has no code, and is never created. Its purpose is simply
-    // to be the place to apply [KeychainCollection] and all the
-    // ICollectionFixture<> interfaces.
+    // This class has no code and is never created.
+    // Its purpose is simply to be the place to apply [CollectionDefinition] and ICollectionFixture<KeychainFixture>.
     // See https://xunit.net/docs/shared-context#collection-fixture
 }
 
@@ -44,24 +43,23 @@ public class KeychainFixture : IAsyncLifetime
         };
 
         await Cli.Wrap("security")
-            .WithArguments(new[] {
+            .WithArguments([
                 "add-internet-password",
                 "-r", protocol,
                 "-s", uri.Host,
                 "-a", userName,
                 "-w", password,
-                _keychainName
-            })
+                _keychainName,
+            ])
             .ExecuteAsync();
 
         // The password becomes available only after the new keychain is opened in the Keychain Access app ¯\_(ツ)_/¯
         var keychainPath = Environment.ExpandEnvironmentVariables($"%HOME%/Library/Keychains/{_keychainName}-db");
         await Cli.Wrap("open")
-            .WithArguments(new[]
-            {
+            .WithArguments([
                 "-g", // do not bring the application to the foreground
-                keychainPath
-            }).ExecuteAsync();
+                keychainPath,
+            ]).ExecuteAsync();
 
         // Wait for the password to be available (max 10s) by polling with `security find-internet-password`
         var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
@@ -74,10 +72,10 @@ public class KeychainFixture : IAsyncLifetime
             // This ensures that the keychain fixture is properly setup and that testing the KeychainCredentials class will work
             var result = await Cli.Wrap("security")
                 .WithValidation(CommandResultValidation.None)
-                .WithArguments(new[] {
+                .WithArguments([
                     "find-internet-password",
                     "-s", uri.Host,
-                })
+                ])
                 .WithStandardOutputPipe(PipeTarget.ToDelegate(line => _messageSink.OnMessage(new DiagnosticMessage($"*** find-internet-password *** {line}"))))
                 .ExecuteAsync();
             if (result.ExitCode == 0)
@@ -90,11 +88,11 @@ public class KeychainFixture : IAsyncLifetime
     async Task IAsyncLifetime.InitializeAsync()
     {
         await Cli.Wrap("security")
-            .WithArguments(new[] {
+            .WithArguments([
                 "create-keychain",
                 "-p", _keychainPassword,
-                _keychainName
-            })
+                _keychainName,
+            ])
             .ExecuteAsync();
 
         await AddInternetPasswordAsync(new Uri("https://www.keychain-credentials-test.com"), "0xced", "hunter2");
@@ -103,11 +101,10 @@ public class KeychainFixture : IAsyncLifetime
     async Task IAsyncLifetime.DisposeAsync()
     {
         await Cli.Wrap("security")
-            .WithArguments(new[]
-            {
+            .WithArguments([
                 "delete-keychain",
-                _keychainName
-            })
+                _keychainName,
+            ])
             .ExecuteAsync();
     }
 }
